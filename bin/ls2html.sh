@@ -55,7 +55,7 @@ ls2html() {
 		printf '%s\n' '<tr><td valign="top"><img src="/icons/back.gif" alt="[PARENTDIR]"></td><td><a href="..">Parent Directory</a></td><td>&nbsp;</td><td align="right">  - </td><td>&nbsp;</td></tr>'
 
 		for f in *; do
-			printf '<tr><td valign="top"><img src="/icons/image2.gif" alt="[IMG]"></td><td><a href="%s">%s</a></td><td align="right">%s</td><td align="right">%s</td><td>&nbsp;</td></tr>' \
+			printf '<tr><td valign="top"><img src="/icons/image2.gif" alt="[IMG]"></td><td><a href="%s">%s</a></td><td align="right">%s</td><td align="right">%s</td><td>&nbsp;</td></tr>\n' \
 				"$f" "$f$([ ! -d "$f" ] || echo /)" 'DATE' 'SIZE'
 		done
 
