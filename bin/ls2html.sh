@@ -3,11 +3,18 @@
 ls2html() {
 	local quiet=false
 	local render="simple"
+	local indexname="index.html"
 	while [ $# -gt 0 ]; do
 		case "$1" in
-			(--help|-h)
-				echo "Usage: $0 [options] [dir]"
-				echo "Options: FILLME ..."
+			(-h|--help)
+				echo "Usage: $0 [options] [--] [dir]"
+				echo "Options:"
+				echo "  -h|--help"
+				echo "  --output <file>      will wrote the result in <file>"
+				echo "  --output  <dir>      will wrote the result in <dir>/index.html"
+				echo "  --indexname <name>   the default filename for directory link (default: index.html)"
+				echo "  -q|--quiet"
+				echo "  --render simple|next  swich to another render (default: simple)"
 				return 0
 			;;
 			(--output)
@@ -16,6 +23,9 @@ ls2html() {
 				else
 					outfile="$1"
 				fi
+			;;
+			(--indexname)
+				shift; indexname="$1"
 			;;
 			(-q|--quiet)
 				quiet=true
@@ -55,8 +65,20 @@ ls2html() {
 		printf '%s\n' '<tr><td valign="top"><img src="/icons/back.gif" alt="[PARENTDIR]"></td><td><a href="..">Parent Directory</a></td><td>&nbsp;</td><td align="right">  - </td><td>&nbsp;</td></tr>'
 
 		for f in *; do
-			printf '<tr><td valign="top"><img src="/icons/image2.gif" alt="[IMG]"></td><td><a href="%s">%s</a></td><td align="right">%s</td><td align="right">%s</td><td>&nbsp;</td></tr>\n' \
-				"$f" "$f$([ ! -d "$f" ] || echo /)" 'DATE' 'SIZE'
+			printf '<tr>'
+				printf '<td valign="top"><img src="/icons/image2.gif" alt="[IMG]"></td>'
+				printf '<td>'
+					if [ -d "$f" ] && [ -f "$f/$indexname" ]; then
+						printf '<a href="%s">%s</a>/<a href="%s">%s</a>' \
+							"$f/" "$f" "$f/$indexname" "$indexname"
+					else
+						printf '<a href="%s">%s</a>' \
+							"$f" "$f$([ ! -d "$f" ] || echo /)"
+					fi
+				printf '</td>'
+				printf '<td align="right">%s</td><td align="right">%s</td><td>&nbsp;</td>' \
+					 'DATE' 'SIZE'
+			printf '</tr>\n'
 		done
 
 		printf '%s\n' '
